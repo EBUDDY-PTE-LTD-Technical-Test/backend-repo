@@ -1,10 +1,17 @@
-import { Router } from "express";
-import UserController from "../controller/userController";
+import { Router,Request,Response,NextFunction } from 'express';
+import { updateUserData,fetchUserData } from '../controller/api';
 
 
-const router =Router()
+const asyncHandler = (fn: Function) => (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+const router = Router();
 
-router.post('/update-user-data',UserController.updateUserData)
-router.get('/fetch-user-data', UserController.fetchUser)
+// Apply authentication middleware to all routes
 
-export default router
+
+// Routes
+router.post('/update-user-data', asyncHandler(updateUserData));
+router.get('/fetch-user-data', asyncHandler(fetchUserData));
+
+export default router;
