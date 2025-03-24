@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { db } from "../config/fireBaseConfig";
 import { User } from "../entities/user";
 
-// 1️⃣ Create User
+//  Create User
 export const createUser = async (
   req: Request,
   res: Response
@@ -28,7 +28,7 @@ export const createUser = async (
   }
 };
 
-// 2️⃣ Fetch User by ID
+// Fetch User by ID
 export const fetchUserData = async (
   req: Request,
   res: Response
@@ -49,7 +49,7 @@ export const fetchUserData = async (
   }
 };
 
-// 3️⃣ Update User
+// Update User
 export const updateUserData = async (
   req: Request,
   res: Response

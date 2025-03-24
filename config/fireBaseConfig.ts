@@ -4,7 +4,7 @@ import serviceAccount from "../serviceAccountKey.json"; // Pastikan file ini ada
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-    databaseURL: "https://your-project-id.firebaseio.com",
+  
   });
 }
 
