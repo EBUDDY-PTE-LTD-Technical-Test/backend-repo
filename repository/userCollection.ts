@@ -1,4 +1,3 @@
-
 import { db } from "../config/fireBaseConfig";
 import { User } from "../entities/user";
 
@@ -9,9 +8,12 @@ export const userCollection = {
   },
 
   updateUser: async (id: string, userData: Partial<User>): Promise<void> => {
-    await db.collection("users").doc(id).update({
-      ...userData,
-      updatedAt: new Date(),
-    });
+    await db
+      .collection("users")
+      .doc(id)
+      .update({
+        ...userData,
+        updatedAt: new Date(),
+      });
   },
 };
