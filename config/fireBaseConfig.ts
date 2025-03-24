@@ -1,15 +1,13 @@
-import * as admin from "firebase-admin";
-import dotenv from "dotenv";
-import path from "path";
+import { initializeApp, cert, ServiceAccount } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
+import serviceAccount from "../serviceAccountKey.json";
 
-dotenv.config();
-
-const serviceAccountPath = path.resolve(__dirname, "../serviceAccountKey.json");
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccountPath),
+console.log("Initializing Firestore...");
+const app = initializeApp({
+  credential: cert(serviceAccount as ServiceAccount),
 });
 
-const db = admin.firestore();
+const db = getFirestore();
+console.log("Firestore initialized:", db !== undefined);
 
-export { admin, db };
+export { db };
