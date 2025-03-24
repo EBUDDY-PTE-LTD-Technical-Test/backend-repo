@@ -1,11 +1,14 @@
+// User interface defining the structure of user data
+export interface User {
+  uid: string;
+  name: string;
+  email: string;
+}
 
-
-export interface User{
-    id?: string;
-    name: string;
-    email: string;
-    phone?: string;
-    address?: string;
-    createdAt?: Date;
-    updatedAt?: Date;
+// Request interface for updating user data
+export interface UpdateUserRequest {
+  name?: string;
+  email?: string;
+  phoneNumber?: string;
+  profilePicture?: string;
 }

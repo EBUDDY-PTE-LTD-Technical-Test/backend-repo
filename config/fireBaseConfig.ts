@@ -1,15 +1,14 @@
-import * as admin from "firebase-admin";
-import dotenv from "dotenv";
-import path from "path";
+import admin from "firebase-admin";
+import serviceAccount from "../serviceAccountKey.json"; // Pastikan file ini ada
 
-dotenv.config();
-
-const serviceAccountPath = path.resolve(__dirname, "../serviceAccountKey.json");
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccountPath),
-});
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+    databaseURL: "https://your-project-id.firebaseio.com",
+  });
+}
 
 const db = admin.firestore();
+const auth = admin.auth();
 
-export { admin, db };
+export { admin, db, auth };

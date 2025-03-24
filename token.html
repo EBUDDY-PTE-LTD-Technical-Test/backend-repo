@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Firebase Token Generator</title>
+    <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-auth-compat.js"></script>
+  </head>
+  <body>
+    <h1>Firebase Token Generator</h1>
+
+    <div>
+      <h2>Sign In</h2>
+      <input type="email" id="email" placeholder="Email" />
+      <input type="password" id="password" placeholder="Password" />
+      <button onclick="signIn()">Sign In</button>
+    </div>
+
+    <div>
+      <h2>Get Token</h2>
+      <button onclick="getToken()">Get ID Token</button>
+      <textarea id="token" rows="10" cols="50" readonly></textarea>
+    </div>
+
+    <script>
+      // Replace with your Firebase config
+      const firebaseConfig = {
+        apiKey: "AIzaSyBf7DjtbuXdUxw2NbVbRuNkVq2P7c1UIIY",
+        authDomain: "backend-repo-8d0e3.firebaseapp.com",
+        projectId: "backend-repo-8d0e3",
+        storageBucket: "backend-repo-8d0e3.firebasestorage.app",
+        messagingSenderId: "895863092424",
+        appId: "1:895863092424:web:b368990e38cf386feea1fd",
+        measurementId: "G-Z94RPJGNPJ",
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+
+      // Sign in function
+      async function signIn() {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        try {
+          await firebase.auth().signInWithEmailAndPassword(email, password);
+          alert("Signed in successfully");
+        } catch (error) {
+          alert("Error signing in: " + error.message);
+        }
+      }
+
+      // Get token function
+      async function getToken() {
+        const user = firebase.auth().currentUser;
+
+        if (!user) {
+          alert("No user is signed in");
+          return;
+        }
+
+        try {
+          const token = await user.getIdToken(true);
+          document.getElementById("token").value = token;
+        } catch (error) {
+          alert("Error getting token: " + error.message);
+        }
+      }
+    </script>
+  </body>
+</html>

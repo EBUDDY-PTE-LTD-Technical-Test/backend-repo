@@ -1,54 +1,21 @@
-import { Request, Response, NextFunction } from 'express';
-import { admin } from '../config/fireBaseConfig';
+import { Request, Response, NextFunction } from "express";
+import { getAuth } from "firebase-admin/auth";
 
-
-export interface AuthenticatedRequest extends Request {
-  user?: {
-    uid: string;
-    email?: string;
-  }
-}
-
-export const authMiddleware = async (
-  req: AuthenticatedRequest, 
-  res: Response, 
-  next: NextFunction
-) => {
+export const authMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const authHeader = req.headers.authorization;
-    
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ 
-        error: 'Unauthorized: Missing or Invalid token format' 
-      });
-    }
-    
-    const token = authHeader.split('Bearer ')[1];
-    
+    const token = req.headers.authorization?.split(" ")[1];
+
     if (!token) {
-      return res.status(401).json({ 
-        error: 'Unauthorized: Missing token' 
-      });
+      res.status(401).json({ message: "Unauthorized: No token provided" });
+      return;
     }
-    
-    try {
-      const decodedToken = await admin.auth().verifyIdToken(token);
-      req.user = {
-        uid: decodedToken.uid,
-        email: decodedToken.email
-      };
-      
-      next();
-    } catch (error) {
-      console.error('Error verifying token:', error);
-      return res.status(403).json({ 
-        error: 'Forbidden: Invalid token' 
-      });
-    }
+
+    const decodedToken = await getAuth().verifyIdToken(token);
+    (req as any).user = decodedToken;
+
+    next();
   } catch (error) {
-    console.error('Auth middleware error:', error);
-    return res.status(500).json({ 
-      error: 'Internal server error' 
-    });
+    console.error("Auth Error:", error);
+    res.status(403).json({ message: "Invalid or expired token" });
   }
 };

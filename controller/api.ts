@@ -1,59 +1,72 @@
-import { Request, Response } from 'express';
-import { User } from '../entities/user';
-import { saveUser, getUserById, getUserByEmail } from '../repository/userCollection';
+import { Request, Response } from "express";
+import { db } from "../config/fireBaseConfig";
+import { User } from "../entities/user";
 
-export const updateUserData = async (req: Request, res: Response) => {
+// 1️⃣ Create User
+export const createUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    console.log('Request body:', req.body); // Debug line
-    
-    const userData: User = req.body;
-    
-    // Check if userData exists
-    if (!userData) {
-      return res.status(400).json({ error: 'No user data provided' });
+    const { uid, name, email } = req.body;
+
+    if (!uid || !name || !email) {
+      res.status(400).json({ message: "Missing fields" });
+      return;
     }
-    
-    // Basic validation
-    if (!userData.email || !userData.id) {
-      return res.status(400).json({ error: 'Email and ID are required fields' });
-    }
-    
-    // If updating an existing user, check if user exists
-    const existingUser = await getUserById(userData.id);
-    if (!existingUser) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-    
-    const savedUser = await saveUser(userData);
-    return res.status(200).json(savedUser);
+
+    const newUser: User = { uid, name, email };
+
+    await db.collection("USERS").doc(uid).set(newUser);
+
+    res
+      .status(201)
+      .json({ message: "User created successfully", user: newUser });
   } catch (error) {
-    console.error('Error updating user data:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    console.error("Error creating user:", error);
+    res.status(500).json({ message: "Internal server error", error });
   }
 };
-export const fetchUserData = async (req: Request, res: Response) => {
+
+// 2️⃣ Fetch User by ID
+export const fetchUserData = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const { id, email } = req.query;
-    
-    if (!id && !email) {
-      return res.status(400).json({ error: 'User ID or email is required' });
+    const userId = req.params.id;
+    const userDoc = await db.collection("USERS").doc(userId).get();
+
+    if (!userDoc.exists) {
+      res.status(404).json({ message: "User not found" });
+      return;
     }
-    
-    let user = null;
-    
-    if (id) {
-      user = await getUserById(id as string);
-    } else if (email) {
-      user = await getUserByEmail(email as string);
-    }
-    
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-    
-    return res.status(200).json(user);
+
+    res.json(userDoc.data());
   } catch (error) {
-    console.error('Error fetching user data:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    console.error("Error fetching user:", error);
+    res.status(500).json({ message: "Internal server error", error });
+  }
+};
+
+// 3️⃣ Update User
+export const updateUserData = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = req.params.id;
+    const userData: Partial<User> = req.body;
+
+    if (!userId || Object.keys(userData).length === 0) {
+      res.status(400).json({ message: "Invalid request data" });
+      return;
+    }
+
+    await db.collection("USERS").doc(userId).update(userData);
+    res.json({ message: "User updated successfully" });
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({ message: "Internal server error", error });
   }
 };

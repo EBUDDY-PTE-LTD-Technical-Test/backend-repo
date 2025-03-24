@@ -1,26 +1,14 @@
-import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
-import router from "../routes/userRoutes";
-dotenv.config();
+import userRoutes from "../routes/userRoutes";
+import authRoutes from "../routes/authRoutes";
 
 const app = express();
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-const PORT = process.env.PORT || 3000;
-
 app.use(cors());
 
-app.use("/api", router);
+app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
 
-app.get("/", (req, res) => {
-  res.send("Backend API is running");
-});
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
-
-export default app;
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
