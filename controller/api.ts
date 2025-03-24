@@ -17,7 +17,7 @@ export const createUser = async (
 
     const newUser: User = { uid, name, email };
 
-    await db.collection("USERS").doc(uid).set(newUser);
+    await db.collection("users").doc(uid).set(newUser);
 
     res
       .status(201)
@@ -35,7 +35,7 @@ export const fetchUserData = async (
 ): Promise<void> => {
   try {
     const userId = req.params.id;
-    const userDoc = await db.collection("USERS").doc(userId).get();
+    const userDoc = await db.collection("users").doc(userId).get();
 
     if (!userDoc.exists) {
       res.status(404).json({ message: "User not found" });
@@ -63,7 +63,7 @@ export const updateUserData = async (
       return;
     }
 
-    await db.collection("USERS").doc(userId).update(userData);
+    await db.collection("users").doc(userId).update(userData);
     res.json({ message: "User updated successfully" });
   } catch (error) {
     console.error("Error updating user:", error);

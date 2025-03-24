@@ -1,14 +1,13 @@
-import admin from "firebase-admin";
-import serviceAccount from "../serviceAccountKey.json"; // Pastikan file ini ada
+import { initializeApp, cert, ServiceAccount } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
+import serviceAccount from "../serviceAccountKey.json";
 
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-  
-  });
-}
+console.log("Initializing Firestore...");
+const app = initializeApp({
+  credential: cert(serviceAccount as ServiceAccount),
+});
 
-const db = admin.firestore();
-const auth = admin.auth();
+const db = getFirestore();
+console.log("Firestore initialized:", db !== undefined);
 
-export { admin, db, auth };
+export { db };
