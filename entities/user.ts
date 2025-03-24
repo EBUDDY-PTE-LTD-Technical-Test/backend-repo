@@ -5,10 +5,5 @@ export interface User {
   email: string;
 }
 
-// Request interface for updating user data
-export interface UpdateUserRequest {
-  name?: string;
-  email?: string;
-  phoneNumber?: string;
-  profilePicture?: string;
-}
+
+
