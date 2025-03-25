@@ -8,14 +8,14 @@ export const createUser = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { uid, name, email } = req.body;
+    const { uid, name, email,password } = req.body;
 
     if (!uid || !name || !email) {
       res.status(400).json({ message: "Missing fields" });
       return;
     }
 
-    const newUser: User = { uid, name, email };
+    const newUser: User = { uid, name, email,password };
 
     await db.collection("users").doc(uid).set(newUser);
 
